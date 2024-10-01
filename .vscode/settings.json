@@ -1,0 +1,11 @@
+{
+  "files.associations": {
+    ".env.*": "dotenv",
+    ".prettierrc": "json",
+    "*.css": "css",
+    "*.rb": "ruby",
+    "stdio.h": "c",
+    "stdlib.h": "c"
+  },
+  "C_Cpp.errorSquiggles": "disabled"
+}
