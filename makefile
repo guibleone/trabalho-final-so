@@ -6,9 +6,9 @@ CCFLAGS=-Wall
 
 LIB=-pthread
 
-SOURCES=$(wildcard *.c)
+SOURCES=$(wildcard ./src/*c)
 
-HEADERS=$(wildcard *.h)
+HEADERS=$(wildcard ./src/*.h)
 
 OBJECTS=$(SOURCES: .c=.o)
 
