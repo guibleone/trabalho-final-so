@@ -5,7 +5,9 @@
     "*.css": "css",
     "*.rb": "ruby",
     "stdio.h": "c",
-    "stdlib.h": "c"
+    "stdlib.h": "c",
+    "pthread.h": "c",
+    "numbers": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

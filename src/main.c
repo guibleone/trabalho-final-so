@@ -1,56 +1,38 @@
-/*
-  Final project for the discipline of Operational Systems
-  at Unicamp.
-*/
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <pthread.h>
+#include <string.h>
 
-#include "mainUtils.h"
-#include "manipulateFiles.h"
-
-void *sortNumbers(void *arg){
-  int *numbers[] = (*(int * args));
-  
-}
+#include "merge_sort.h"
 
 int main(int argc, char *argv[])
 {
-  struct timespec start, end;
-
-  if (argc < 4)
+  // Garante que o número de entradas é válido
+  if (argc <= 4)
   {
-    fprintf(stderr, "Usage: %s <nThreads> <inputFiles> -o <outputFile>\n", argv[0]);
+    fprintf(stderr, "Uso correto: ./mergesort [2,4,8] <arquivo> <arquivo> ... -o <saida>\n");
     exit(EXIT_FAILURE);
   }
 
-  unsigned int nThreads = atoi(argv[1]);
-  if (nThreads != 2 && nThreads != 4 && nThreads != 8)
+  unsigned int n_threads = atoi(argv[1]);
+  if (n_threads != 2 && n_threads != 4 && n_threads != 8)
   {
-    fprintf(stderr, "Incorrect number of threads: %d\n", nThreads);
+    fprintf(stderr, "Número de threads deve ser 2, 4 ou 8.\n");
     exit(EXIT_FAILURE);
   }
 
+  const char *output_file = argv[argc - 1];
 
-  pthread_t threadsID[nThreads];
-  for (register unsigned int i = 0; i < nThreads; i++)
-  {
-    pthread_create(&threadsID[i], NULL, sortNumbers, numbers);
-  }
-  
+  // LEITURA DOS NÚMEROS
+  unsigned int total_numbers;
+  int *numbers = getNumbers(argc, argv, &total_numbers);
 
+  int *sorted_numbers = getSortedNumbers(numbers, total_numbers, n_threads);
 
-  clock_gettime(CLOCK_MONOTONIC, &start);
-  FILE *outputFile = openOutputFile(argv[argc - 1]);
+  printSortedNumbers(sorted_numbers, total_numbers, output_file);
 
-  processFiles(argc, argv, outputFile);
-  // sortFile();
+  free(numbers);
+  free(sorted_numbers);
 
-  clock_gettime(CLOCK_MONOTONIC, &end);
-  handleTime(&start, &end);
-
-  fclose(outputFile);
-
-  return 0;
+  return EXIT_SUCCESS;
 }
