@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 #include <string.h>
 
-#include "merge_sort.h"
+#include "main_funcs.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,12 +14,6 @@ int main(int argc, char *argv[])
   }
 
   unsigned int n_threads = atoi(argv[1]);
-  if (n_threads != 2 && n_threads != 4 && n_threads != 8)
-  {
-    fprintf(stderr, "Número de threads deve ser 2, 4 ou 8.\n");
-    exit(EXIT_FAILURE);
-  }
-
   const char *output_file = argv[argc - 1];
 
   // LEITURA DOS NÚMEROS

@@ -7,7 +7,10 @@
     "stdio.h": "c",
     "stdlib.h": "c",
     "pthread.h": "c",
-    "numbers": "c"
+    "numbers": "c",
+    "string.h": "c",
+    "algorithm": "c",
+    "format": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }
