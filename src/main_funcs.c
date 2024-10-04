@@ -88,8 +88,14 @@ int *getSortedNumbers(int *numbers, unsigned int total_numbers, int n_threads)
 }
 void printSortedNumbers(int *sorted_numbers, unsigned int total_numbers, const char *output_file)
 {
-  for (unsigned int i = 0; i < total_numbers; i++)
+  FILE *arq = fopen(output_file, "w");
+  if (arq == NULL)
   {
-    printf("%d ", sorted_numbers[i]);
+    fprintf(stderr, "Erro ao abir arquivo de saída.\n");
+    exit(EXIT_FAILURE);
   }
+  for (unsigned int i = 0; i < total_numbers; i++)
+    fprintf(arq, "%d\n", sorted_numbers[i]);
+
+  fclose(arq);
 }
