@@ -1,2 +1,4 @@
 *.dat
 mergesort
+.gitignore
+*.git
