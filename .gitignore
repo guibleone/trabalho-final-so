@@ -1,3 +1,4 @@
 mergesort
 .gitignore
 *.git
+.clang-format
