@@ -2,28 +2,45 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "main_funcs.h"
-
 int main(int argc, char *argv[]) {
-    if (argc <= 4) {
-        fprintf(stderr, "Uso correto: ./mergesort [2,4,8] <arquivo> <arquivo> "
-                        "... -o <saida>\n");
-        exit(EXIT_FAILURE);
+    if (argc < 6 || strcmp(argv[argc - 2], "-o") != 0) {
+        fprintf(stderr,
+                "Uso: %s <número de threads> <arquivo1> <arquivo2> ... "
+                "<arquivoN> -o <arquivo de saída>\n",
+                argv[0]);
+        return EXIT_FAILURE;
     }
 
-    unsigned int n_threads = atoi(argv[1]);
+    char *output_file = argv[argc - 1];
+    int threads_quantity = atoi(argv[1]);
+    unsigned int files_quantity = argc - 4;
 
+    char **file_names = malloc(files_quantity * sizeof(char *));
+    if (file_names == NULL) {
+        fprintf(stderr, "Erro ao alocar memória para os nomes dos arquivos.\n");
+        return EXIT_FAILURE;
+    }
 
-    // LEITURA DOS NÚMEROS
-    int total_numbers;
-    int *numbers = getNumbers(argc, argv, &total_numbers);
+    for (unsigned int i = 0; i < files_quantity; i++) {
+        file_names[i] = malloc(strlen(argv[i + 2]) + 1);
+        if (file_names[i] == NULL) {
+            perror("Falha ao alocar memória para file_names");
+            for (unsigned int j = 0; j < i; j++) {
+                free(file_names[j]);
+            }
+            free(file_names);
+            return EXIT_FAILURE;
+        }
+        strcpy(file_names[i], argv[i + 2]);
+    }
 
-    int *sorted_numbers = getSortedNumbers(numbers, total_numbers, n_threads);
-
-    printSortedNumbers(sorted_numbers, total_numbers, output_file);
-
-    free(numbers);
-    free(sorted_numbers);
-
+    printf("Arquivo de saída: %s\n", output_file);
+    printf("Quantidade de threads: %d\n", threads_quantity);
+    printf("Quantidade de arquivos: %u\n", files_quantity);
+    for (unsigned int i = 0; i < files_quantity; i++) {
+        printf("Arquivo %d: %s\n", i + 1, file_names[i]);
+        free(file_names[i]); // Libera memória
+    }
+    free(file_names); // Libera a memória do array
     return EXIT_SUCCESS;
 }
