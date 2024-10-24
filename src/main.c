@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     }
 
     unsigned int n_threads = atoi(argv[1]);
-    const char *output_file = argv[argc - 1];
+
 
     // LEITURA DOS NÚMEROS
     int total_numbers;
