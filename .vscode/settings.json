@@ -12,7 +12,8 @@
     "algorithm": "c",
     "format": "c",
     "cstring": "c",
-    "typeinfo": "c"
+    "typeinfo": "c",
+    "file_controller.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

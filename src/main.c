@@ -13,17 +13,17 @@ int main(int argc, char *argv[]) {
     validateInputs(argc, argv);
 
     Arguments *arguments = allocateArguments(argc, argv);
-    pthread_t *threads_ids = allocateThreadsIds(arguments->threads_quantity);
     FileData *files_data = allocateFilesData(arguments->files_quantity);
 
     for (i = 0; i < arguments->files_quantity; i++) {
         readNumbersFromFile(&files_data[i], arguments->file_names[i]);
     }
 
-    free(files_data);
-    free(threads_ids);
-    free(arguments);
+    for (i = 0; i < arguments->files_quantity; i++) {
+        sortNumbers(&files_data[i], arguments->threads_quantity);
+    }
 
+    freeMemory(arguments, files_data);
     return 0;
 }
 

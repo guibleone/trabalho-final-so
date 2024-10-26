@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "thread_manager.h"
 #include "types.h"
 
 void validateInputs(int argc, char *argv[]) {
@@ -57,4 +58,29 @@ Arguments *allocateArguments(int argc, char *argv[]) {
     }
 
     return arguments;
+}
+
+void sortNumbers(FileData *file_data, int threads_quantity) {
+    pthread_t *threads_ids = allocateThreadsIds(threads_quantity);
+    unsigned int i;
+
+    for (i = 0; i < threads_quantity; i++)
+        if (pthread_create(&threads_ids[i], NULL, sortNumbersThread, (void *)file_data) !=
+            0) {
+            fprintf(stderr, "Erro: Erro ao criar thread\n");
+            exit(EXIT_FAILURE);
+        }
+    for (i = 0; i < threads_quantity; i++) {
+        pthread_join(threads_ids[i], NULL);
+    }
+}
+
+void freeMemory(Arguments *arguments, FileData *files_data) {
+    for (unsigned int i = 0; i < arguments->files_quantity; i++) {
+        free(arguments->file_names[i]);
+        free(files_data[i].numbers);
+    }
+
+    free(files_data);
+    free(arguments);
 }

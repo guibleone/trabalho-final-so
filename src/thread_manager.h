@@ -1,16 +1,13 @@
-#include "pthread.h"
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef THREAD_MANAGER_H
+#define THREAD_MANAGER_H
 
 #include "types.h"
+#include <pthread.h>
 
-pthread_t *allocateThreadsIds(int threads_quantity) {
-    pthread_t *threads_ids = malloc(threads_quantity * sizeof(pthread_t));
+// Aloca memória para os ids das threads.
+pthread_t *allocateThreadsIds(int threads_quantity);
 
-    if (threads_ids == NULL) {
-        fprintf(stderr, "Error: Falha ao alocar memória para threads_ids.\n");
-        exit(EXIT_FAILURE);
-    }
+// Ordena os números de um arquivo
+void *sortNumbersThread(void *args);
 
-    return threads_ids;
-}
+#endif
