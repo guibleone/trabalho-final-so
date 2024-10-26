@@ -10,7 +10,9 @@
     "numbers": "c",
     "string.h": "c",
     "algorithm": "c",
-    "format": "c"
+    "format": "c",
+    "cstring": "c",
+    "typeinfo": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }
