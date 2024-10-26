@@ -4,12 +4,11 @@
 
 #include "types.h"
 
-pthread_t *allocateThreadsIds(Arguments *arguments) {
-    pthread_t *threads_ids = NULL;
+pthread_t *allocateThreadsIds(int threads_quantity) {
+    pthread_t *threads_ids = malloc(threads_quantity * sizeof(pthread_t));
 
-    if ((threads_ids = (pthread_t *)malloc(arguments->threads_quantity *
-                                           sizeof(pthread_t))) == NULL) {
-        fprintf(stderr, "Error: Falha ao alocar memória para threads_ids.");
+    if (threads_ids == NULL) {
+        fprintf(stderr, "Error: Falha ao alocar memória para threads_ids.\n");
         exit(EXIT_FAILURE);
     }
 

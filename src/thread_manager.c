@@ -5,6 +5,6 @@
 #include <pthread.h>
 
 // Aloca memória para os ids das threads.
-pthread_t *allocateThreadsIds(Arguments *arguments);
+pthread_t *allocateThreadsIds(int threads_quantity);
 
 #endif

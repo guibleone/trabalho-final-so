@@ -9,4 +9,10 @@ typedef struct {
     char *output_file;
 } Arguments;
 
+// Dados para cada arquivo
+typedef struct {
+    int quantity;
+    int *numbers;
+} FileData;
+
 #endif

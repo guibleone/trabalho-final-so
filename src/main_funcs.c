@@ -27,7 +27,7 @@ void validateInputs(int argc, char *argv[]) {
 Arguments *allocateArguments(int argc, char *argv[]) {
     Arguments *arguments = malloc(sizeof(Arguments));
     if (arguments == NULL) {
-        fprintf(stderr, "Error: Alocação de memória para Arguments falhou.");
+        fprintf(stderr, "Error: Alocação de memória para Arguments falhou.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -36,21 +36,21 @@ Arguments *allocateArguments(int argc, char *argv[]) {
 
     arguments->output_file = malloc(strlen(argv[argc - 1]) + 1);
     if (arguments == NULL) {
-        fprintf(stderr, "Error: Alocação de memória para arquivo de saída falhou.");
+        fprintf(stderr, "Error: Alocação de memória para arquivo de saída falhou.\n");
         exit(EXIT_FAILURE);
     }
     strcpy(arguments->output_file, argv[argc - 1]);
 
     arguments->file_names = malloc(arguments->files_quantity * sizeof(char *));
     if (arguments->file_names == NULL) {
-        fprintf(stderr, "Error: Alocação de memória para os nomes dos arquivos.");
+        fprintf(stderr, "Error: Alocação de memória para os nomes dos arquivos.\n");
         exit(EXIT_FAILURE);
     }
 
     for (unsigned int i = 0; i < arguments->files_quantity; i++) {
         arguments->file_names[i] = malloc(strlen(argv[i + 2] + 1));
         if (arguments->file_names[i] == NULL) {
-            fprintf(stderr, "Error: Alocação de memória para os nomes dos arquivos.");
+            fprintf(stderr, "Error: Alocação de memória para os nomes dos arquivos.\n");
             exit(EXIT_FAILURE);
         }
         strcpy(arguments->file_names[i], argv[i + 2]);
