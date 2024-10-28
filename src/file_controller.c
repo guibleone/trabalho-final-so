@@ -54,3 +54,14 @@ void readNumbersFromFile(FileData *file_data, char *file_name) {
 
     fclose(file);
 }
+
+void printOrderedNumbers(char *output_file, int *numbers) {
+    FILE *file = fopen(output_file, "w+");
+    if (file == NULL) {
+        fprintf(stderr, "Error: Falha ao abrir arquivo de saída: %s\n", output_file);
+        free(numbers);
+        exit(EXIT_FAILURE);
+    }
+
+    fclose(file);
+}

@@ -15,4 +15,11 @@ typedef struct {
     int *numbers;
 } FileData;
 
+// Dados enviados entre as threads
+typedef struct {
+    FileData *file_data;
+    unsigned int thread_id;
+    char *output_file;
+} ThreadsData;
+
 #endif

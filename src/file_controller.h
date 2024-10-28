@@ -9,4 +9,7 @@ FileData *allocateFilesData(int files_quantity);
 // Le os números do arquivo e preenche a estrutura
 void readNumbersFromFile(FileData *file_data, char *file_name);
 
+// Imprime os valores ordenados no arquivo de sáida
+void printOrderedNumbers(char *output_file, int *numbers);
+
 #endif
