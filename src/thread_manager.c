@@ -35,27 +35,15 @@ ThreadsData *allocateThreadsData(FileData *file_data, unsigned int thread_id,
 int compareFunction(const void *a, const void *b) { return (*(int *)a - *(int *)b); }
 
 void *sortNumbersThread(void *args) {
-    FileData *file_data;
-    unsigned int thread_id;
-    char *output_file;
+    ThreadsData *threads_data = (ThreadsData *)args;
+    FileData *file_data = threads_data->file_data;
+    FileData *ordered_numbers = malloc(sizeof(FileData));
 
-    file_data = ((ThreadsData *)args)->file_data;
-    thread_id = ((ThreadsData *)args)->thread_id;
-    output_file = ((ThreadsData *)args)->output_file;
-
-    free(args);
-
-    printf("Thread ID: %d\n", thread_id);
-    /*
-    printf("Quantidade de Números: %d\n", file_data->quantity);
-    printf("Arquivo de Saída: %s\n", output_file);*/
-
-    // Função da biblioteca padrão
     qsort(file_data->numbers, file_data->quantity, sizeof(int), compareFunction);
 
+    ordered_numbers->numbers = file_data->numbers;
+    ordered_numbers->quantity = file_data->quantity;
 
-    printOrderedNumbers(output_file, file_data);
-
-
-    pthread_exit(NULL);
+    free(threads_data);
+    pthread_exit((void *)ordered_numbers);
 }

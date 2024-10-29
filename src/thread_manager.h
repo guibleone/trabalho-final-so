@@ -14,4 +14,6 @@ ThreadsData *allocateThreadsData(FileData *file_data, unsigned int thread_id,
 // Ordena os números de um arquivo
 void *sortNumbersThread(void *args);
 
+int compareFunction(const void *a, const void *b);
+
 #endif

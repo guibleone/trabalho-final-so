@@ -13,10 +13,14 @@ int main(int argc, char *argv[]) {
     FileData *files_data = allocateFilesData(arguments->files_quantity);
     pthread_t *threads_ids = allocateThreadsIds(arguments->threads_quantity);
 
+    FileData ordered_data = {0, NULL};
+
+    // Lê números dos arquivos e os armazena em files_data
     for (unsigned int i = 0; i < arguments->files_quantity; i++) {
         readNumbersFromFile(&files_data[i], arguments->file_names[i]);
     }
-    
+
+    // Criação das threads para ordenar os números
     for (unsigned int i = 0; i < arguments->files_quantity; i++) {
         unsigned int thread_id = i % arguments->threads_quantity;
         ThreadsData *threads_data =
@@ -28,31 +32,28 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    // Recebendo e imprimindo resultados das threads
+    void *thread_result;
     for (unsigned int i = 0; i < arguments->files_quantity; i++) {
         unsigned int thread_id = i % arguments->threads_quantity;
-        pthread_join(threads_ids[thread_id], NULL);
+        pthread_join(threads_ids[thread_id], &thread_result);
+
+        FileData *result_data = (FileData *)thread_result;
+        int thread_quantity = result_data->quantity;
+        int *thread_numbers = result_data->numbers;
+
+        // Aloca ou realoca memória para os números ordenados
+        ordered_data.numbers =
+            realloc(ordered_data.numbers, (ordered_data.quantity + thread_quantity) * sizeof(int));
+        for (int j = 0; j < thread_quantity; j++) {
+            ordered_data.numbers[ordered_data.quantity++] = thread_numbers[j];
+        }
     }
+
+    qsort(ordered_data.numbers, ordered_data.quantity, sizeof(int), compareFunction);
+
+    printOrderedNumbers(arguments->output_file, &ordered_data);
 
     freeMemory(arguments, files_data, threads_ids);
     return 0;
 }
-
-/*
-    printf("%s\n", arguments->output_file);
-    printf("%d\n", arguments->files_quantity);
-    printf("%d\n", arguments->threads_quantity);
-    for (unsigned int i = 0; i < arguments->files_quantity; i++) {
-        printf("%s ", arguments->file_names[i]);
-    }
-*/
-
-/*
-    for (i = 0; i < arguments->files_quantity; i++) {
-         printf("Quantidade de Números: %d\n", files_data[i].quantity);
-        for (int j = 0; j < files_data[i].quantity; j++) {
-            printf("%d ", files_data[i].numbers[j]);
-        }
-
-        printf("\n");
-    }
-*/
