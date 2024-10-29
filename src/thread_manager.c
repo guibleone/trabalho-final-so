@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "file_controller.h"
 #include "types.h"
 
 pthread_t *allocateThreadsIds(int threads_quantity) {
@@ -45,13 +46,16 @@ void *sortNumbersThread(void *args) {
     free(args);
 
     printf("Thread ID: %d\n", thread_id);
+    /*
     printf("Quantidade de Números: %d\n", file_data->quantity);
-    printf("Arquivo de Saída: %s\n", output_file);
+    printf("Arquivo de Saída: %s\n", output_file);*/
 
     // Função da biblioteca padrão
     qsort(file_data->numbers, file_data->quantity, sizeof(int), compareFunction);
 
-    printOrderedNumbers(output_file, file_data->numbers);
+
+    printOrderedNumbers(output_file, file_data);
+
 
     pthread_exit(NULL);
 }

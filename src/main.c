@@ -7,25 +7,20 @@
 #include "thread_manager.h"
 
 int main(int argc, char *argv[]) {
-
-    unsigned int i;
-
     validateInputs(argc, argv);
 
     Arguments *arguments = allocateArguments(argc, argv);
     FileData *files_data = allocateFilesData(arguments->files_quantity);
     pthread_t *threads_ids = allocateThreadsIds(arguments->threads_quantity);
 
-    for (i = 0; i < arguments->files_quantity; i++) {
+    for (unsigned int i = 0; i < arguments->files_quantity; i++) {
         readNumbersFromFile(&files_data[i], arguments->file_names[i]);
     }
-
-    for (i = 0; i < arguments->files_quantity; i++) {
+    
+    for (unsigned int i = 0; i < arguments->files_quantity; i++) {
         unsigned int thread_id = i % arguments->threads_quantity;
         ThreadsData *threads_data =
             allocateThreadsData(&files_data[i], thread_id, arguments->output_file);
-
-        //  printf("Thread ID: %d\n", thread_id);
         if (pthread_create(&threads_ids[thread_id], NULL, sortNumbersThread,
                            (void *)threads_data) != 0) {
             fprintf(stderr, "Erro: Erro ao criar thread\n");
@@ -33,7 +28,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    for (i = 0; i < arguments->files_quantity; i++) {
+    for (unsigned int i = 0; i < arguments->files_quantity; i++) {
         unsigned int thread_id = i % arguments->threads_quantity;
         pthread_join(threads_ids[thread_id], NULL);
     }

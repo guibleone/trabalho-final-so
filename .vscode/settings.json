@@ -14,7 +14,8 @@
     "cstring": "c",
     "typeinfo": "c",
     "file_controller.h": "c",
-    "types.h": "c"
+    "types.h": "c",
+    "cstdlib": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

@@ -1,6 +1,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <pthread.h>
+
 // Dados fornecidos pelo usuário
 typedef struct {
     int threads_quantity;
@@ -20,6 +22,8 @@ typedef struct {
     FileData *file_data;
     unsigned int thread_id;
     char *output_file;
+    int start;
+    int end;
 } ThreadsData;
 
 #endif

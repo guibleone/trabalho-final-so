@@ -55,13 +55,20 @@ void readNumbersFromFile(FileData *file_data, char *file_name) {
     fclose(file);
 }
 
-void printOrderedNumbers(char *output_file, int *numbers) {
-    FILE *file = fopen(output_file, "w+");
+
+void printOrderedNumbers(char *output_file, FileData *file_data) {
+    FILE *file = fopen(output_file, "a+");
     if (file == NULL) {
         fprintf(stderr, "Error: Falha ao abrir arquivo de saída: %s\n", output_file);
-        free(numbers);
         exit(EXIT_FAILURE);
     }
 
-    fclose(file);
+    for (unsigned int i = 0; i < file_data->quantity; i++) {
+        fprintf(file, "%d\n", file_data->numbers[i]);
+    }
+
+    if (fclose(file) != 0) {
+        fprintf(stderr, "Error: Falha ao fechar o arquivo de saída: %s\n", output_file);
+        exit(EXIT_FAILURE);
+    }
 }

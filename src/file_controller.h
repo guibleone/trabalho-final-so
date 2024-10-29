@@ -10,6 +10,6 @@ FileData *allocateFilesData(int files_quantity);
 void readNumbersFromFile(FileData *file_data, char *file_name);
 
 // Imprime os valores ordenados no arquivo de sáida
-void printOrderedNumbers(char *output_file, int *numbers);
+void printOrderedNumbers(char *output_file, FileData *file_data);
 
 #endif
