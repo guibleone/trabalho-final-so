@@ -17,7 +17,14 @@ git clone https://github.com/guibleone/trabalho-final-so.git
 
 ### Modo de Utilização
 1. Use o comando `make` para compilar o programa em um único executável.
-2. Execute o programa com o comando `./mergesort <threads> <arquivos> -o <arquivo_saida>`.
+2. Execute o programa com o comando `./mergesort <n_threads> <arquivo1> <arquivo2> ... <arquivo_n> -o <arquivo_saida>`.
+
+### Teste do Programa
+Para testar o funcionamento do programa com arquivos de entrada já configurados, execute o comando abaixo. Isso irá utilizar quatro threads para processar os arquivos de entrada `arq1.dat` e `arq2.dat` na pasta `Inputs`, e salvar o resultado no arquivo `saida.dat`:
+
+```bash
+./mergesort 4 ./Inputs/arq1.dat ./Inputs/arq2.dat -o saida.dat
+```
 
 #### *Opcional*
 3. Execute `./auxPrograms/criador.o` para criar arquivos de teste para o organizador.
