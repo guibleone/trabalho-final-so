@@ -10,6 +10,11 @@ O objetivo deste programa é exercitar o uso de multithreading para organizar li
 <!-- ![Modo de Funcionamento](/Arquitetura%201.png) -->
 <img src="./Assets/Arquitetura%201.png" alt="Funcionamento" width="400" height="453">
 
+### Clone o Repositório
+```bash
+git clone https://github.com/guibleone/trabalho-final-so.git
+```
+
 ### Modo de Utilização
 1. Use o comando `make` para compilar o programa em um único executável.
 2. Execute o programa com o comando `./mergesort <threads> <arquivos> -o <arquivo_saida>`.
