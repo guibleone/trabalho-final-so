@@ -17,7 +17,7 @@ git clone https://github.com/guibleone/trabalho-final-so.git
 
 ### Modo de Utilização
 1. Use o comando `make` para compilar o programa em um único executável.
-2. Execute o programa com o comando `./mergesort <threads> <arquivos> -o <arquivo_saida>`.
+2. Execute o programa com o comando `./mergesort <n_threads> <arquivo1> <arquivo2> ... <arquivo_n> -o <arquivo_saida>`.
 
 #### *Opcional*
 3. Execute `./auxPrograms/criador.o` para criar arquivos de teste para o organizador.
