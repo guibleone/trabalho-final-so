@@ -13,9 +13,10 @@ O objetivo deste programa é exercitar o uso de multithreading para organizar li
 ### Modo de Utilização
 1. Use o comando `make` para compilar o programa em um único executável.
 2. Execute o programa com o comando `./mergesort <threads> <arquivos> -o <arquivo_saida>`.
-- *Opcional*
-    3. Execute `./criador.o` para criar arquivos de teste para o organizador.
-    4. Execute `./verificador.o` para verificar se o arquivo de saída está devidamente ordenado.
+
+#### *Opcional*
+3. Execute `./criador.o` para criar arquivos de teste para o organizador.
+4. Execute `./verificador.o` para verificar se o arquivo de saída está devidamente ordenado.
 
 ### Avisos
 Este programa foi desenvolvido em ambiente Linux e para sistemas Linux. Não há garantias de funcionamento em Windows nativo; caso necessário, recomenda-se utilizar a WSL (Windows Subsystem for Linux).
