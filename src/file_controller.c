@@ -58,8 +58,8 @@ void readNumbersFromFile(FileData *file_data, char *file_name) {
 //Imprime uma FileData para um arquivo especifícado, caso não exista cria-o
 void printOrderedNumbers(char *output_file, FileData *file_data) {
     // Substitua para ver até onde o processamento da thread vai
-    // FILE *file = fopen(output_file, "a+");
-    FILE *file = fopen(output_file, "w+");
+    //FILE *file = fopen(output_file, "a+");
+     FILE *file = fopen(output_file, "w+");
     if (file == NULL) {
         fprintf(stderr, "Error: Falha ao abrir arquivo de saída: %s\n", output_file);
         exit(EXIT_FAILURE);
