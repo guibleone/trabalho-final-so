@@ -30,7 +30,7 @@ $(MAIN): $(OBJECTS)
 %.o: %.c
 	$(CC) $(CCFLAGS) $(INCLUDES) $(LIBS) -c $< -o $@
 
-# Regra para limpar os arquivos objeto
+# Regra para limpar os arquivos objeto 
 clean_objects:
 	@rm -f $(OBJECTS)
 
