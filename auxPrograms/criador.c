@@ -4,7 +4,7 @@
 
 void criarArquivoComNumerosAleatorios(int id, int quantidade) {
     char nomeArquivo[50];
-    sprintf(nomeArquivo, "./Inputs/arq%d.dat", id);  // Nomeia os arquivos como "arquivo_1.txt", "arquivo_2.txt", etc.
+    sprintf(nomeArquivo, "../Inputs/arq%d.dat", id);  // Nomeia os arquivos como "arquivo_1.txt", "arquivo_2.txt", etc.
 
     FILE *arquivo = fopen(nomeArquivo, "w");  // Abre o arquivo em modo de escrita
     if (arquivo == NULL) {

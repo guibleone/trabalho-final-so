@@ -32,7 +32,7 @@ int verificarSequenciaCrescente(const char *nomeArquivo) {
 int main() {
     char nomeArquivo[50];
     
-    printf("Digite o endereço do arquivo para verificar: ");
+    printf("Digite o nome do arquivo para verificar: ");
     scanf("%s", nomeArquivo);
 
     int resultado = verificarSequenciaCrescente(nomeArquivo);

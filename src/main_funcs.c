@@ -61,7 +61,7 @@ Arguments *allocateArguments(int argc, char *argv[]) {
 }
 
 void freeMemory(Arguments *arguments, FileData *files_data, pthread_t *threads_ids) {
-    for (unsigned int i = 0; i < arguments->files_quantity; i++) {
+    for (unsigned int i = 0; i < arguments->threads_quantity; i++) {
         free(arguments->file_names[i]);
         free(files_data[i].numbers);
     }
@@ -77,7 +77,7 @@ void splitterData (FileData **files_data, FileData mergedData, int T) {
     int ratio = mergedData.quantity / T;
     int rest = mergedData.quantity % T;
     // Descomente para Visualizar a distribuição do Vetor
-    // printf("Total | razao | resto: %d|%d|%d\n",mergedData.quantity, ratio, rest);
+    printf("Total | razao | resto: %d|%d|%d\n",mergedData.quantity, ratio, rest);
 
     int *distribution = calloc(T, sizeof(int));
     if (distribution == NULL){
