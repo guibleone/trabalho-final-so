@@ -55,8 +55,11 @@ void readNumbersFromFile(FileData *file_data, char *file_name) {
     fclose(file);
 }
 
+//Imprime uma FileData para um arquivo especifícado, caso não exista cria-o
 void printOrderedNumbers(char *output_file, FileData *file_data) {
-    FILE *file = fopen(output_file, "w");
+    // Substitua para ver até onde o processamento da thread vai
+    FILE *file = fopen(output_file, "a+");
+    // FILE *file = fopen(output_file, "w");
     if (file == NULL) {
         fprintf(stderr, "Error: Falha ao abrir arquivo de saída: %s\n", output_file);
         exit(EXIT_FAILURE);
@@ -65,6 +68,9 @@ void printOrderedNumbers(char *output_file, FileData *file_data) {
     for (unsigned int i = 0; i < file_data->quantity; i++) {
         fprintf(file, "%d\n", file_data->numbers[i]);
     }
+    //Descomente a linha a baixo para Visualizar até onde é o print, 
+    //para ver o processamento da thread acessa thread_manager e descomente também
+    fprintf(file, "---------\n");
 
     if (fclose(file) != 0) {
         fprintf(stderr, "Error: Falha ao fechar o arquivo de saída: %s\n", output_file);

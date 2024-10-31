@@ -17,13 +17,16 @@ typedef struct {
     int *numbers;
 } FileData;
 
-// Dados enviados entre as threads
+typedef struct {
+    FileData *outputFileData;
+    double tempoExecucao;
+} ThreadsOutputData;
+
+// Dados enviados para as threads
 typedef struct {
     FileData *file_data;
     unsigned int thread_id;
     char *output_file;
-    int start;
-    int end;
 } ThreadsData;
 
 #endif
