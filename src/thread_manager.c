@@ -1,68 +1,59 @@
+#include <bits/time.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
-#define INT_MAX 999999
+#include "file_controller.h"
+#include "types.h"
 
-#include "sort.h"
-#include "thread_manager.h"
+pthread_t *allocateThreadsIds(int threads_quantity) {
+    pthread_t *threads_ids = malloc(threads_quantity * sizeof(pthread_t));
 
-pthread_t *allocateThreadsIds(unsigned int n_threads) {
-    if (n_threads != 2 && n_threads != 4 && n_threads != 8) {
-        fprintf(stderr, "Número de threads deve ser 2, 4 ou 8.\n");
+    if (threads_ids == NULL) {
+        fprintf(stderr, "Error: Falha ao alocar memória para threads_ids.\n");
         exit(EXIT_FAILURE);
     }
 
-    pthread_t *threadsIds = malloc(n_threads * sizeof(pthread_t));
-    if (threadsIds == NULL) {
-        fprintf(stderr, "Erro ao alocar IDS da threads.\n");
+    return threads_ids;
+}
+ThreadsData *allocateThreadsData(FileData *file_data, unsigned int thread_id,
+                                 char *output_file) {
+    ThreadsData *threads_data = (ThreadsData *)malloc(sizeof(ThreadsData));
+    if (threads_data == NULL) {
+        fprintf(stderr, "Error: Falha ao alocar memória para Threads Data.\n");
         exit(EXIT_FAILURE);
     }
 
-    return threadsIds;
+    threads_data->file_data = file_data;
+    threads_data->thread_id = thread_id;
+    threads_data->output_file = malloc(strlen(output_file) + 1);
+    strcpy(threads_data->output_file, output_file);
+
+    return threads_data;
 }
 
-void *sortThread(void *args) {
-    Data *data = (Data *)args;
-    int *numbers = data->numbers;
-    unsigned int start = data->start;
-    unsigned int end = data->end;
+int compareFunction(const void *a, const void *b) { return (*(int *)a - *(int *)b); }
 
-    quickSort(numbers, start, end);
+void *sortNumbersThread(void *args) {
+    ThreadsData *threads_data = (ThreadsData *)args;
+    ThreadsOutputData *threadOutput = (ThreadsOutputData *) malloc(sizeof(ThreadsOutputData));
+    struct timespec inicio, fim;
+    clock_gettime(CLOCK_MONOTONIC, &inicio);
+    FileData *file_data = threads_data->file_data;
+    FileData *ordered_numbers = malloc(sizeof(FileData));
 
-    pthread_exit(NULL);
-}
+    qsort(file_data->numbers, file_data->quantity, sizeof(int), compareFunction);
 
-void mergeSortedChunks(int *sortedNumbers, Data *threads_data, int n_threads,
-                       unsigned int total_numbers) {
-    unsigned int *indices = malloc(n_threads * sizeof(unsigned int));
-    if (indices == NULL) {
-        fprintf(stderr, "Erro ao alocar memória para os índices.\n");
-        exit(EXIT_FAILURE);
-    }
-    for (unsigned int i = 0; i < n_threads; i++)
-        indices[i] = threads_data[i].start;
-
-    for (unsigned int k = 0; k < total_numbers; k++) {
-        int min_value = INT_MAX;
-        int min_index = -1;
-
-        for (unsigned int i = 0; i < n_threads; i++) {
-            if (indices[i] < threads_data[i].end) {
-                if (threads_data[i].numbers[indices[i]] < min_value) {
-                    min_value = threads_data[i].numbers[indices[i]];
-                    min_index = i;
-                }
-            }
-        }
-        sortedNumbers[k] = min_value;
-        indices[min_index]++;
-        
-        if (min_index != -1) { 
-            sortedNumbers[k] = min_value;
-            indices[min_index]++;
-        }
-    }
-
-    free(indices);
+    ordered_numbers->numbers = file_data->numbers;
+    ordered_numbers->quantity = file_data->quantity;
+    threadOutput->outputFileData = ordered_numbers;
+    clock_gettime(CLOCK_MONOTONIC, &fim);
+    threadOutput->tempoExecucao = (fim.tv_nsec - inicio.tv_nsec) / 1e9;
+    // printf("Eu sou uma thread %u: %f\n",threads_data->thread_id, threadOutput->tempoExecucao);
+    free(threads_data);
+    //Descomente para ver até onde essa thread vai e va ao no file controller e descomente tambem;
+    // printOrderedNumbers("teste.txt", ordered_numbers);
+    pthread_exit((void *)threadOutput);
 }

@@ -1,108 +1,153 @@
-#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include "types.h"
 
-#include "thread_manager.h"
-
-int *getNumbers(int argc, char *argv[], int *total_numbers) {
+// Função que valida as entradas dos argumentos.
+void validateInputs(int argc, char *argv[]) {
     if (argc < 5) {
-        fprintf(stderr, "Número insuficiente de argumentos.\n");
+        fprintf(stderr,
+                "Error: Uso inválido! Utilize: %s [1,2,4,8] <arquivo1> "
+                "<arquivo2> ... "
+                "<arquivoN> -o <arquivo de saída>\n",
+                argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    if (atoi(argv[1]) != 1 && atoi(argv[1]) != 2 && atoi(argv[1]) != 4 && atoi(argv[1]) != 8) {
+        fprintf(stderr, "Error: Quantidade de Threads inválida! Números "
+                        "válidos: 2, 4 e 8.\n");
+        exit(EXIT_FAILURE);
+    }
+    if (strcmp(argv[argc - 2], "–o") & strcmp(argv[argc - 2], "-o")) {
+        fprintf(stderr, "Error: Arquivo de saída não especificado!\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+Arguments *allocateArguments(int argc, char *argv[]) {
+    Arguments *arguments = malloc(sizeof(Arguments));
+    if (arguments == NULL) {
+        fprintf(stderr, "Error: Alocação de memória para Arguments falhou.\n");
         exit(EXIT_FAILURE);
     }
 
-    int *numbers = malloc(sizeof(int) * 100);
-    if (numbers == NULL) {
-        fprintf(stderr, "Erro ao alocar a memória.\n");
+    arguments->threads_quantity = atoi(argv[1]);
+    arguments->files_quantity = argc - 4;
+
+    arguments->output_file = malloc(strlen(argv[argc - 1]) + 1);
+    if (arguments == NULL) {
+        fprintf(stderr, "Error: Alocação de memória para arquivo de saída falhou.\n");
+        exit(EXIT_FAILURE);
+    }
+    strcpy(arguments->output_file, argv[argc - 1]);
+
+    arguments->file_names = malloc(arguments->files_quantity * sizeof(char *));
+    if (arguments->file_names == NULL) {
+        fprintf(stderr, "Error: Alocação de memória para os nomes dos arquivos.\n");
         exit(EXIT_FAILURE);
     }
 
-    *total_numbers = 0;
-
-    unsigned int n_files = argc - 4;
-
-    for (unsigned int i = 2; i < n_files + 2; i++) {
-        FILE *arq = fopen(argv[i], "r");
-        if (arq == NULL) {
-            fprintf(stderr, "Erro ao abrir arquivo %s.\n", argv[i]);
-            free(numbers);
+    for (unsigned int i = 0; i < arguments->files_quantity; i++) {
+        arguments->file_names[i] = malloc(strlen(argv[i + 2] + 1));
+        if (arguments->file_names[i] == NULL) {
+            fprintf(stderr, "Error: Alocação de memória para os nomes dos arquivos.\n");
             exit(EXIT_FAILURE);
         }
+        strcpy(arguments->file_names[i], argv[i + 2]);
+    }
 
-        int num;
-        while (fscanf(arq, "%d", &num) != EOF) {
-            if (*total_numbers % 100 == 0) {
-                int *temp =
-                    realloc(numbers, (*total_numbers + 100) * sizeof(int));
-                if (temp == NULL) {
-                    fprintf(stderr,
-                            "Erro ao realocar memória para os números.\n");
-                    free(numbers);
-                    fclose(arq);
-                    exit(EXIT_FAILURE);
-                }
-                numbers = temp;
-            }
-            numbers[*total_numbers] = num;
-            (*total_numbers)++;
+    return arguments;
+}
+
+void freeMemory(Arguments *arguments, FileData *files_data, pthread_t *threads_ids) {
+    for (unsigned int i = 0; i < arguments->files_quantity; i++) {
+        free(arguments->file_names[i]);
+        free(files_data[i].numbers);
+    }
+
+    free(files_data);
+    free(arguments);
+    free(threads_ids);
+}
+
+
+// Dividir os dados dos arquivos em n = T threads.
+void splitterData (FileData **files_data, FileData mergedData, int T) {
+    int ratio = mergedData.quantity / T;
+    int rest = mergedData.quantity % T;
+    // Descomente para Visualizar a distribuição do Vetor
+    // printf("Total | razao | resto: %d|%d|%d\n",mergedData.quantity, ratio, rest);
+
+    int *distribution = calloc(T, sizeof(int));
+    if (distribution == NULL){
+        fprintf(stderr, "Error: Falha na alocação de memória.\n");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < T; i++)
+        distribution[i] = 0;
+    if (rest != 0){
+        for (int i = 0; rest > 0; rest--) {
+            distribution[i]++;
+            i = (i + 1) % T;
+        }   
+    } 
+
+    FileData * splitter_data = (FileData *) malloc(T * sizeof(FileData));
+    if (splitter_data == NULL) {
+        fprintf(stderr, "Error: Falha na alocação de memória para splitter_data.\n");
+        free(distribution);
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < T; i++) {
+        splitter_data[i].numbers = malloc((ratio + distribution[i]) * sizeof(int));
+        if (splitter_data[i].numbers == NULL) {
+            fprintf(stderr, "Error: Memory allocation failed for numbers array.\n");
+            free(distribution); 
+            for (int k = 0; k < i; k++) free(splitter_data[k].numbers); 
+            free(splitter_data);
+            exit(EXIT_FAILURE);
+
         }
-        fclose(arq);
+        splitter_data[i].quantity = ratio + distribution[i]; 
     }
 
-    return numbers;
+
+    int v = 0;
+    for (int i = 0; i < T; i++) {
+        for (int j = 0; j < splitter_data[i].quantity; j++) {
+            splitter_data[i].numbers[j] = mergedData.numbers[v++];
+        }
+    }
+    free(distribution);
+
+    *files_data = splitter_data;
 }
 
-int *getSortedNumbers(int *numbers, unsigned int total_numbers, int n_threads) {
-    int *sortedNumbers = malloc(total_numbers * sizeof(int));
-    if (sortedNumbers == NULL) {
-        fprintf(stderr, "Erro ao alocar memória para sortedNumbers.\n");
-        exit(EXIT_FAILURE);
+// Juntar os dados de todas os arquivos em um único Array
+void mergeData (FileData *files_data, FileData mergedData, int nData) {
+    int k = 0;
+    for (int i = 0; i < nData; i++) {
+        for (int j = 0; j < files_data[i].quantity; j++) {
+            mergedData.numbers[k] = files_data[i].numbers[j];
+            k++;
+        }        
     }
-
-    pthread_t *threadsIds = allocateThreadsIds(n_threads);
-    Data *threads_data = malloc(n_threads * sizeof(Data));
-    if (threads_data == NULL) {
-        fprintf(stderr, "Erro ao alocar dados para as threads.\n");
-        free(sortedNumbers);
-        free(threadsIds);
-        exit(EXIT_FAILURE);
-    }
-
-    unsigned int chunk_size = total_numbers / n_threads;
-    unsigned int remainder = total_numbers % n_threads;
-
-    for (unsigned int i = 0; i < n_threads; i++) {
-        threads_data[i].numbers = numbers;
-        threads_data[i].start = i * chunk_size;
-        threads_data[i].end = (i == n_threads - 1)
-                                  ? (i + 1) * chunk_size + remainder
-                                  : (i + 1) * chunk_size;
-        pthread_create(&threadsIds[i], NULL, sortThread,
-                       (void *)&threads_data[i]);
-    }
-
-    for (unsigned int i = 0; i < n_threads; i++) {
-        pthread_join(threadsIds[i], NULL);
-    }
-
-    mergeSortedChunks(sortedNumbers, threads_data, n_threads, total_numbers);
-
-    free(threadsIds);
-    free(threads_data);
-
-    return sortedNumbers;
 }
 
-void printSortedNumbers(int *sorted_numbers, unsigned int total_numbers,
-                        const char *output_file) {
-    FILE *arq = fopen(output_file, "w");
-    if (arq == NULL) {
-        fprintf(stderr, "Erro ao abrir arquivo de saída.\n");
-        exit(EXIT_FAILURE);
+void manageData (FileData **files_data, int nData, int T) { 
+    int totalQuantity = 0;
+    for (int i = 0; i < nData; i++){
+        totalQuantity += (*files_data)[i].quantity;
     }
 
-    for (unsigned int i = 0; i < total_numbers; i++) {
-        fprintf(arq, "%d\n", sorted_numbers[i]);
-    }
-
-    fclose(arq);
+    FileData mergedData;
+    mergedData.numbers = (int *)  malloc(totalQuantity * sizeof(int));
+    mergedData.quantity = totalQuantity;
+    mergeData((*files_data), mergedData, nData);
+    FileData *split_data = NULL;
+    splitterData(&split_data, mergedData, T);
+    free(mergedData.numbers);
+    *files_data = split_data;
 }

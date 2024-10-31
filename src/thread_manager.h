@@ -1,15 +1,19 @@
 #ifndef THREAD_MANAGER_H
 #define THREAD_MANAGER_H
 
-typedef struct {
-    int *numbers;
-    unsigned int start;
-    unsigned int end;
-} Data;
+#include "types.h"
+#include <pthread.h>
 
-pthread_t *allocateThreadsIds(unsigned int n_threads);
-void *sortThread(void *args);
-void mergeSortedChunks(int *sortedNumbers, Data *threads_data, int n_threads,
-                       unsigned int total_numbers);
+// Aloca memória para os ids das threads.
+pthread_t *allocateThreadsIds(int threads_quantity);
+
+// Aloca memória para os dados transitados entre as threads
+ThreadsData *allocateThreadsData(FileData *file_data, unsigned int thread_id,
+                                 char *output_file);
+
+// Ordena os números de um arquivo
+void *sortNumbersThread(void *args);
+
+int compareFunction(const void *a, const void *b);
 
 #endif
