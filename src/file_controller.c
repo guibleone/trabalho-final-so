@@ -70,7 +70,7 @@ void printOrderedNumbers(char *output_file, FileData *file_data) {
     }
     //Descomente a linha a baixo para Visualizar até onde é o print, 
     //para ver o processamento da thread acessa thread_manager e descomente também
-    fprintf(file, "---------\n");
+    // fprintf(file, "---------\n");
 
     if (fclose(file) != 0) {
         fprintf(stderr, "Error: Falha ao fechar o arquivo de saída: %s\n", output_file);

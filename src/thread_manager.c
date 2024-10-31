@@ -54,6 +54,6 @@ void *sortNumbersThread(void *args) {
     // printf("Eu sou uma thread %u: %f\n",threads_data->thread_id, threadOutput->tempoExecucao);
     free(threads_data);
     //Descomente para ver até onde essa thread vai e va ao no file controller e descomente tambem;
-    printOrderedNumbers("cacheta.txt", ordered_numbers);
+    // printOrderedNumbers("teste.txt", ordered_numbers);
     pthread_exit((void *)threadOutput);
 }

@@ -77,7 +77,7 @@ void splitterData (FileData **files_data, FileData mergedData, int T) {
     int ratio = mergedData.quantity / T;
     int rest = mergedData.quantity % T;
     // Descomente para Visualizar a distribuição do Vetor
-    printf("Total | razao | resto: %d|%d|%d\n",mergedData.quantity, ratio, rest);
+    // printf("Total | razao | resto: %d|%d|%d\n",mergedData.quantity, ratio, rest);
 
     int *distribution = calloc(T, sizeof(int));
     if (distribution == NULL){
