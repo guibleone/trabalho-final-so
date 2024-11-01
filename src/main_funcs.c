@@ -16,7 +16,7 @@ void validateInputs(int argc, char *argv[]) {
     }
     if (atoi(argv[1]) != 1 && atoi(argv[1]) != 2 && atoi(argv[1]) != 4 && atoi(argv[1]) != 8) {
         fprintf(stderr, "Error: Quantidade de Threads inválida! Números "
-                        "válidos: 2, 4 e 8.\n");
+                        "válidos: 1, 2, 4 e 8.\n");
         exit(EXIT_FAILURE);
     }
     if (strcmp(argv[argc - 2], "–o") & strcmp(argv[argc - 2], "-o")) {
@@ -77,7 +77,7 @@ void splitterData (FileData **files_data, FileData mergedData, int T) {
     int ratio = mergedData.quantity / T;
     int rest = mergedData.quantity % T;
     // Descomente para Visualizar a distribuição do Vetor
-    printf("Total | razao | resto: %d|%d|%d\n",mergedData.quantity, ratio, rest);
+    //printf("Total | razao | resto: %d|%d|%d\n",mergedData.quantity, ratio, rest);
 
     int *distribution = calloc(T, sizeof(int));
     if (distribution == NULL){
