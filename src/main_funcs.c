@@ -36,7 +36,7 @@ Arguments *allocateArguments(int argc, char *argv[]) {
     arguments->files_quantity = argc - 4;
 
     arguments->output_file = malloc(strlen(argv[argc - 1]) + 1);
-    if (arguments == NULL) {
+    if (arguments->output_file == NULL) {
         fprintf(stderr, "Error: Alocação de memória para arquivo de saída falhou.\n");
         exit(EXIT_FAILURE);
     }
@@ -49,7 +49,7 @@ Arguments *allocateArguments(int argc, char *argv[]) {
     }
 
     for (unsigned int i = 0; i < arguments->files_quantity; i++) {
-        arguments->file_names[i] = malloc(strlen(argv[i + 2] + 1));
+        arguments->file_names[i] = malloc(strlen(argv[i + 2]) + 1);
         if (arguments->file_names[i] == NULL) {
             fprintf(stderr, "Error: Alocação de memória para os nomes dos arquivos.\n");
             exit(EXIT_FAILURE);
@@ -61,12 +61,14 @@ Arguments *allocateArguments(int argc, char *argv[]) {
 }
 
 void freeMemory(Arguments *arguments, FileData *files_data, pthread_t *threads_ids) {
-    for (unsigned int i = 0; i < arguments->threads_quantity; i++) {
+    for (unsigned int i = 0; i < arguments->files_quantity; i++) 
         free(arguments->file_names[i]);
+    for (unsigned int i = 0; i < arguments->threads_quantity; i++) 
         free(files_data[i].numbers);
-    }
 
     free(files_data);
+    free(arguments->output_file);
+    free(arguments->file_names);
     free(arguments);
     free(threads_ids);
 }

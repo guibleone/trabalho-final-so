@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
 
     Arguments *arguments = allocateArguments(argc, argv);
     FileData *files_data = allocateFilesData(arguments->files_quantity);
+    FileData *teste = files_data;  
     pthread_t *threads_ids = allocateThreadsIds(arguments->threads_quantity);
 
     FileData ordered_data = {0, NULL};
@@ -37,11 +38,10 @@ int main(int argc, char *argv[]) {
             exit(EXIT_FAILURE);
         }
     }
-
+    
     // Recebendo e imprimindo resultados das threads
     void *thread_result;
     for (unsigned int i = 0; i < arguments->threads_quantity; i++) {
-        // printOrderedNumbers("cacheta.txt", &files_data[i]);
         unsigned int thread_id = i;
         pthread_join(threads_ids[thread_id], &thread_result);
         ThreadsOutputData *threadOutput = (ThreadsOutputData *)thread_result;
@@ -60,17 +60,23 @@ int main(int argc, char *argv[]) {
         for (int j = 0; j < thread_quantity; j++) {
             ordered_data.numbers[ordered_data.quantity++] = thread_numbers[j];
         }
+        free(threadOutput->outputFileData);
+        free(threadOutput);
     }
 
     qsort(ordered_data.numbers, ordered_data.quantity, sizeof(int), compareFunction);
 
     //Fim do Timer
     clock_gettime(CLOCK_MONOTONIC, &fim);
-    float tempoExecucaoTotal = (fim.tv_nsec - inicio.tv_nsec) / 1e9;
+    float tempoExecucaoTotal = (fim.tv_sec - inicio.tv_sec) + (fim.tv_nsec - inicio.tv_nsec) / 1e9;
     printf("Tempo total de execução: %f segundos.\n", tempoExecucaoTotal);
 
     printOrderedNumbers(arguments->output_file, &ordered_data);
 
+    free(teste->numbers);
+    // for (int i = 0; arguments->files_quantity; i++)
+        // free(&teste[i]);
+    free(ordered_data.numbers);
     freeMemory(arguments, files_data, threads_ids);
     return 0;
 }

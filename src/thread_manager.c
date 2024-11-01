@@ -5,7 +5,6 @@
 #include <string.h>
 #include <time.h>
 
-#include "file_controller.h"
 #include "types.h"
 
 pthread_t *allocateThreadsIds(int threads_quantity) {
@@ -50,8 +49,8 @@ void *sortNumbersThread(void *args) {
     ordered_numbers->quantity = file_data->quantity;
     threadOutput->outputFileData = ordered_numbers;
     clock_gettime(CLOCK_MONOTONIC, &fim);
-    threadOutput->tempoExecucao = (fim.tv_nsec - inicio.tv_nsec) / 1e9;
-    // printf("Eu sou uma thread %u: %f\n",threads_data->thread_id, threadOutput->tempoExecucao);
+    threadOutput->tempoExecucao = (fim.tv_sec - inicio.tv_sec) + (fim.tv_nsec - inicio.tv_nsec) / 1e9;
+    free(threads_data->output_file);
     free(threads_data);
     //Descomente para ver até onde essa thread vai e va ao no file controller e descomente tambem;
     // printOrderedNumbers("teste.txt", ordered_numbers);
