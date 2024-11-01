@@ -1,8 +1,8 @@
+#include "types.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "types.h"
 
 // Função que valida as entradas dos argumentos.
 void validateInputs(int argc, char *argv[]) {
@@ -14,9 +14,10 @@ void validateInputs(int argc, char *argv[]) {
                 argv[0]);
         exit(EXIT_FAILURE);
     }
-    if (atoi(argv[1]) != 1 && atoi(argv[1]) != 2 && atoi(argv[1]) != 4 && atoi(argv[1]) != 8) {
+    if (atoi(argv[1]) != 1 && atoi(argv[1]) != 2 && atoi(argv[1]) != 4 &&
+        atoi(argv[1]) != 8) {
         fprintf(stderr, "Error: Quantidade de Threads inválida! Números "
-                        "válidos: 2, 4 e 8.\n");
+                        "válidos: 1, 2, 4 e 8.\n");
         exit(EXIT_FAILURE);
     }
     if (strcmp(argv[argc - 2], "–o") & strcmp(argv[argc - 2], "-o")) {
@@ -73,29 +74,28 @@ void freeMemory(Arguments *arguments, FileData *files_data, pthread_t *threads_i
     free(threads_ids);
 }
 
-
 // Dividir os dados dos arquivos em n = T threads.
 void splitterData (FileData **files_data, FileData mergedData, int T, int nData) {
     int ratio = mergedData.quantity / T;
     int rest = mergedData.quantity % T;
     // Descomente para Visualizar a distribuição do Vetor
-    printf("Total | razao | resto: %d|%d|%d\n",mergedData.quantity, ratio, rest);
+    // printf("Total | razao | resto: %d|%d|%d\n",mergedData.quantity, ratio, rest);
 
     int *distribution = calloc(T, sizeof(int));
-    if (distribution == NULL){
+    if (distribution == NULL) {
         fprintf(stderr, "Error: Falha na alocação de memória.\n");
         exit(EXIT_FAILURE);
     }
     for (int i = 0; i < T; i++)
         distribution[i] = 0;
-    if (rest != 0){
+    if (rest != 0) {
         for (int i = 0; rest > 0; rest--) {
             distribution[i]++;
             i = (i + 1) % T;
-        }   
-    } 
+        }
+    }
 
-    FileData * splitter_data = (FileData *) malloc(T * sizeof(FileData));
+    FileData *splitter_data = (FileData *)malloc(T * sizeof(FileData));
     if (splitter_data == NULL) {
         fprintf(stderr, "Error: Falha na alocação de memória para splitter_data.\n");
         free(distribution);
@@ -106,15 +106,14 @@ void splitterData (FileData **files_data, FileData mergedData, int T, int nData)
         splitter_data[i].numbers = malloc((ratio + distribution[i]) * sizeof(int));
         if (splitter_data[i].numbers == NULL) {
             fprintf(stderr, "Error: Memory allocation failed for numbers array.\n");
-            free(distribution); 
-            for (int k = 0; k < i; k++) free(splitter_data[k].numbers); 
+            free(distribution);
+            for (int k = 0; k < i; k++)
+                free(splitter_data[k].numbers);
             free(splitter_data);
             exit(EXIT_FAILURE);
-
         }
-        splitter_data[i].quantity = ratio + distribution[i]; 
+        splitter_data[i].quantity = ratio + distribution[i];
     }
-
 
     int v = 0;
     for (int i = 0; i < T; i++) {
@@ -128,7 +127,7 @@ void splitterData (FileData **files_data, FileData mergedData, int T, int nData)
 }
 
 // Juntar os dados de todas os arquivos em um único Array
-void mergeData (FileData *files_data, FileData mergedData, int nData) {
+void mergeData(FileData *files_data, FileData mergedData, int nData) {
     int k = 0;
     for (int i = 0; i < nData; i++) {
         for (int j = 0; j < files_data[i].quantity; j++) {
@@ -139,14 +138,14 @@ void mergeData (FileData *files_data, FileData mergedData, int nData) {
     }
 }
 
-void manageData (FileData **files_data, int nData, int T) { 
+void manageData(FileData **files_data, int nData, int T) {
     int totalQuantity = 0;
-    for (int i = 0; i < nData; i++){
+    for (int i = 0; i < nData; i++) {
         totalQuantity += (*files_data)[i].quantity;
     }
 
     FileData mergedData;
-    mergedData.numbers = (int *)  malloc(totalQuantity * sizeof(int));
+    mergedData.numbers = (int *)malloc(totalQuantity * sizeof(int));
     mergedData.quantity = totalQuantity;
     mergeData((*files_data), mergedData, nData);
     FileData *split_data = NULL;
