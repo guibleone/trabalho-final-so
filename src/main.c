@@ -73,9 +73,7 @@ int main(int argc, char *argv[]) {
 
     printOrderedNumbers(arguments->output_file, &ordered_data);
 
-    free(teste->numbers);
-    // for (int i = 0; arguments->files_quantity; i++)
-        // free(&teste[i]);
+        free(teste);
     free(ordered_data.numbers);
     freeMemory(arguments, files_data, threads_ids);
     return 0;

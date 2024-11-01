@@ -75,7 +75,7 @@ void freeMemory(Arguments *arguments, FileData *files_data, pthread_t *threads_i
 
 
 // Dividir os dados dos arquivos em n = T threads.
-void splitterData (FileData **files_data, FileData mergedData, int T) {
+void splitterData (FileData **files_data, FileData mergedData, int T, int nData) {
     int ratio = mergedData.quantity / T;
     int rest = mergedData.quantity % T;
     // Descomente para Visualizar a distribuição do Vetor
@@ -134,7 +134,8 @@ void mergeData (FileData *files_data, FileData mergedData, int nData) {
         for (int j = 0; j < files_data[i].quantity; j++) {
             mergedData.numbers[k] = files_data[i].numbers[j];
             k++;
-        }        
+        }       
+        free(files_data[i].numbers); 
     }
 }
 
@@ -149,7 +150,7 @@ void manageData (FileData **files_data, int nData, int T) {
     mergedData.quantity = totalQuantity;
     mergeData((*files_data), mergedData, nData);
     FileData *split_data = NULL;
-    splitterData(&split_data, mergedData, T);
+    splitterData(&split_data, mergedData, T, nData);
     free(mergedData.numbers);
     *files_data = split_data;
 }
