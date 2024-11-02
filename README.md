@@ -16,8 +16,9 @@ git clone https://github.com/guibleone/trabalho-final-so.git
 ```
 
 ### Modo de Utilização
-1. Use o comando `make` para compilar o programa em um único executável.
-2. Execute o programa com o comando `./mergesort <n_threads> <arquivo1> <arquivo2> ... <arquivo_n> -o <arquivo_saida>`.
+1. Mova-se para o diretório `cd trabalho-final-so`.
+2. Use o comando `make` para compilar o programa em um único executável.
+3. Execute o programa com o comando `./mergesort <n_threads> <arquivo1> <arquivo2> ... <arquivo_n> -o <arquivo_saida>`.
 
 ### Teste do Programa
 Para testar o programa, execute o script testes.sh, que realiza testes com 1, 2, 4 e 8 threads. Ele usa cinco arquivos de entrada predefinidos e exibe os resultados para facilitar a análise do desempenho.
