@@ -7,6 +7,7 @@
 
 #include "types.h"
 
+// Aloca a memória para os ThreadsID
 pthread_t *allocateThreadsIds(int threads_quantity) {
     pthread_t *threads_ids = malloc(threads_quantity * sizeof(pthread_t));
 
@@ -17,8 +18,9 @@ pthread_t *allocateThreadsIds(int threads_quantity) {
 
     return threads_ids;
 }
-ThreadsData *allocateThreadsData(FileData *file_data, unsigned int thread_id,
-                                 char *output_file) {
+
+// Aloca memória para os dados que serão processado pelas Threads
+ThreadsData *allocateThreadsData(FileData *file_data, unsigned int thread_id, char *output_file) {
     ThreadsData *threads_data = (ThreadsData *)malloc(sizeof(ThreadsData));
     if (threads_data == NULL) {
         fprintf(stderr, "Error: Falha ao alocar memória para Threads Data.\n");
@@ -33,8 +35,10 @@ ThreadsData *allocateThreadsData(FileData *file_data, unsigned int thread_id,
     return threads_data;
 }
 
+// Função de comparação para o quicksort
 int compareFunction(const void *a, const void *b) { return (*(int *)a - *(int *)b); }
 
+// Função para ordenar os números com base no quicksort que será executada por uma thread;
 void *sortNumbersThread(void *args) {
     ThreadsData *threads_data = (ThreadsData *)args;
     ThreadsOutputData *threadOutput = (ThreadsOutputData *) malloc(sizeof(ThreadsOutputData));

@@ -13,7 +13,8 @@ int main(int argc, char *argv[]) {
 
     Arguments *arguments = allocateArguments(argc, argv);
     FileData *files_data = allocateFilesData(arguments->files_quantity);
-    FileData *teste = files_data;  
+    //Posteriormente o endereço será trocado, então é necessário salvar o endereço para desalocar no final;  
+    FileData *files_data_address = files_data;  
     pthread_t *threads_ids = allocateThreadsIds(arguments->threads_quantity);
 
     FileData ordered_data = {0, NULL};
@@ -44,6 +45,8 @@ int main(int argc, char *argv[]) {
     for (unsigned int i = 0; i < arguments->threads_quantity; i++) {
         unsigned int thread_id = i;
         pthread_join(threads_ids[thread_id], &thread_result);
+    
+        // Conversão da resposta do threads para uma váriavel tipada
         ThreadsOutputData *threadOutput = (ThreadsOutputData *)thread_result;
         printf("Tempo de execução do Thread %d: %f segundos.\n",i,threadOutput->tempoExecucao);
         FileData *result_data = threadOutput->outputFileData;
@@ -64,6 +67,7 @@ int main(int argc, char *argv[]) {
         free(threadOutput);
     }
 
+    //Ordena com base 
     qsort(ordered_data.numbers, ordered_data.quantity, sizeof(int), compareFunction);
 
     //Fim do Timer
@@ -73,7 +77,7 @@ int main(int argc, char *argv[]) {
 
     printOrderedNumbers(arguments->output_file, &ordered_data);
 
-        free(teste);
+    free(files_data_address);
     free(ordered_data.numbers);
     freeMemory(arguments, files_data, threads_ids);
     return 0;

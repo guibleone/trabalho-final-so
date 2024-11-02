@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "types.h"
-
+// Faz a alocação da quantidade de arquivos para o ponteiro de filesData;
 FileData *allocateFilesData(int files_quantity) {
     FileData *files_data = malloc(files_quantity * sizeof(FileData));
 
@@ -14,9 +14,11 @@ FileData *allocateFilesData(int files_quantity) {
     return files_data;
 }
 
+// Lê os arquivos e assim, aloca os numeros dos arquivos para um ponteiro de *file_data.
 void readNumbersFromFile(FileData *file_data, char *file_name) {
     int capacity = 50;
-
+    // ============================================================
+    //Inicializa o alocamento de memória dos números do arquivo.
     file_data->numbers = malloc(capacity * sizeof(int));
     if (file_data->numbers == NULL) {
         fprintf(stderr, "Error: Falha ao alocar memória para números do file_data\n");
@@ -25,7 +27,8 @@ void readNumbersFromFile(FileData *file_data, char *file_name) {
 
     int number;
     int quantity = 0;
-
+    // ============================================================
+    //Abre o arquivo para leitura;
     FILE *file = fopen(file_name, "r");
     if (file == NULL) {
         fprintf(stderr, "Error: Falha ao abrir arquivo: %s.\n", file_name);
@@ -33,6 +36,8 @@ void readNumbersFromFile(FileData *file_data, char *file_name) {
         exit(EXIT_FAILURE);
     }
 
+    // ============================================================
+    // Lê linha a linha do arquivo, e enquanto não chegar ao fim realoca o vetor para armazenar os dados   
     while (fscanf(file, "%d", &number) == 1) {
         if (quantity == capacity) {
             capacity += 50;
