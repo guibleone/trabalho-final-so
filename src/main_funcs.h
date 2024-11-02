@@ -13,7 +13,7 @@ Arguments *allocateArguments(int argc, char *argv[]);
 void freeMemory(Arguments *arguments, FileData *files_data, pthread_t *threads_ids);
 
 // Manipula o vetor para fazer a distribuição igualmente para as trhreads dos dados
-void manageData(FileData **files_data, int nData, int T);
+void manageData(FileData **files_data, int n_data, int T);
 
 
 #endif

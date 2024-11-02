@@ -62,11 +62,11 @@ Arguments *allocateArguments(int argc, char *argv[]) {
     return arguments;
 }
 
-//Libera a memória de muitos arrays já alocados;
+// Libera a memória de muitos arrays já alocados;
 void freeMemory(Arguments *arguments, FileData *files_data, pthread_t *threads_ids) {
-    for (unsigned int i = 0; i < arguments->files_quantity; i++) 
+    for (unsigned int i = 0; i < arguments->files_quantity; i++)
         free(arguments->file_names[i]);
-    for (unsigned int i = 0; i < arguments->threads_quantity; i++) 
+    for (unsigned int i = 0; i < arguments->threads_quantity; i++)
         free(files_data[i].numbers);
 
     free(files_data);
@@ -77,12 +77,12 @@ void freeMemory(Arguments *arguments, FileData *files_data, pthread_t *threads_i
 }
 
 // Dividir os dados dos arquivos em n = T threads.
-void splitterData (FileData **files_data, FileData mergedData, int T, int nData) {
-    int ratio = mergedData.quantity / T;
-    int rest = mergedData.quantity % T;
+void splitterData(FileData **files_data, FileData merged_data, int T, int n_data) {
+    int ratio = merged_data.quantity / T;
+    int rest = merged_data.quantity % T;
     // ============================================================
     // Descomente para Visualizar a distribuição do Vetor
-    // printf("Total | razao | resto: %d|%d|%d\n",mergedData.quantity, ratio, rest);
+    // printf("Total | razao | resto: %d|%d|%d\n",merged_data.quantity, ratio, rest);
 
     // ============================================================
     // Aloca mamória para o vetor de distribuição
@@ -92,7 +92,7 @@ void splitterData (FileData **files_data, FileData mergedData, int T, int nData)
         exit(EXIT_FAILURE);
     }
     // ============================================================
-    // For para a distribuição do resto da divisão dos arquivos 
+    // For para a distribuição do resto da divisão dos arquivos
     // Para uniformizar entre todas as threads
     for (int i = 0; i < T; i++)
         distribution[i] = 0;
@@ -103,7 +103,8 @@ void splitterData (FileData **files_data, FileData mergedData, int T, int nData)
         }
     }
     // ============================================================
-    // Aloca a váriavel que será a distribuição uniforme entre todos os números dos arquivos, baseado no número de threads;
+    // Aloca a váriavel que será a distribuição uniforme entre todos os números dos
+    // arquivos, baseado no número de threads;
     FileData *splitter_data = (FileData *)malloc(T * sizeof(FileData));
     if (splitter_data == NULL) {
         fprintf(stderr, "Error: Falha na alocação de memória para splitter_data.\n");
@@ -112,7 +113,8 @@ void splitterData (FileData **files_data, FileData mergedData, int T, int nData)
     }
 
     // ============================================================
-    // Alocação de memoria dos numeros do vetor Splitter data, baseado na uniformidade da quantidade de números
+    // Alocação de memoria dos numeros do vetor Splitter data, baseado na uniformidade da
+    // quantidade de números
     for (int i = 0; i < T; i++) {
         splitter_data[i].numbers = malloc((ratio + distribution[i]) * sizeof(int));
         if (splitter_data[i].numbers == NULL) {
@@ -127,11 +129,12 @@ void splitterData (FileData **files_data, FileData mergedData, int T, int nData)
     }
 
     // ============================================================
-    // Unificação dos arrays para o merged data, para ser dividido em vários vetores do splitter data  
+    // Unificação dos arrays para o merged data, para ser dividido em vários vetores do
+    // splitter data
     int v = 0;
     for (int i = 0; i < T; i++) {
         for (int j = 0; j < splitter_data[i].quantity; j++) {
-            splitter_data[i].numbers[j] = mergedData.numbers[v++];
+            splitter_data[i].numbers[j] = merged_data.numbers[v++];
         }
     }
     free(distribution);
@@ -140,29 +143,30 @@ void splitterData (FileData **files_data, FileData mergedData, int T, int nData)
 }
 
 // Juntar os dados de todas os arquivos em um único Array
-void mergeData(FileData *files_data, FileData mergedData, int nData) {
+void mergeData(FileData *files_data, FileData merged_data, int n_data) {
     int k = 0;
-    for (int i = 0; i < nData; i++) {
+    for (int i = 0; i < n_data; i++) {
         for (int j = 0; j < files_data[i].quantity; j++) {
-            mergedData.numbers[k] = files_data[i].numbers[j];
+            merged_data.numbers[k] = files_data[i].numbers[j];
             k++;
-        }       
-        free(files_data[i].numbers); 
+        }
+        free(files_data[i].numbers);
     }
 }
-// Pego vetor FileData, a fim de junta-los e dividir em números de threads, modificando-o para . 
-void manageData(FileData **files_data, int nData, int T) {
+// Pego vetor FileData, a fim de junta-los e dividir em números de threads, modificando-o
+// para .
+void manageData(FileData **files_data, int n_data, int T) {
     int totalQuantity = 0;
-    for (int i = 0; i < nData; i++) {
+    for (int i = 0; i < n_data; i++) {
         totalQuantity += (*files_data)[i].quantity;
     }
 
-    FileData mergedData;
-    mergedData.numbers = (int *)malloc(totalQuantity * sizeof(int));
-    mergedData.quantity = totalQuantity;
-    mergeData((*files_data), mergedData, nData);
+    FileData merged_data;
+    merged_data.numbers = (int *)malloc(totalQuantity * sizeof(int));
+    merged_data.quantity = totalQuantity;
+    mergeData((*files_data), merged_data, n_data);
     FileData *split_data = NULL;
-    splitterData(&split_data, mergedData, T, nData);
-    free(mergedData.numbers);
+    splitterData(&split_data, merged_data, T, n_data);
+    free(merged_data.numbers);
     *files_data = split_data;
 }

@@ -20,7 +20,8 @@ pthread_t *allocateThreadsIds(int threads_quantity) {
 }
 
 // Aloca memória para os dados que serão processado pelas Threads
-ThreadsData *allocateThreadsData(FileData *file_data, unsigned int thread_id, char *output_file) {
+ThreadsData *allocateThreadsData(FileData *file_data, unsigned int thread_id,
+                                 char *output_file) {
     ThreadsData *threads_data = (ThreadsData *)malloc(sizeof(ThreadsData));
     if (threads_data == NULL) {
         fprintf(stderr, "Error: Falha ao alocar memória para Threads Data.\n");
@@ -41,9 +42,10 @@ int compareFunction(const void *a, const void *b) { return (*(int *)a - *(int *)
 // Função para ordenar os números com base no quicksort que será executada por uma thread;
 void *sortNumbersThread(void *args) {
     ThreadsData *threads_data = (ThreadsData *)args;
-    ThreadsOutputData *threadOutput = (ThreadsOutputData *) malloc(sizeof(ThreadsOutputData));
-    struct timespec inicio, fim;
-    clock_gettime(CLOCK_MONOTONIC, &inicio);
+    ThreadsOutputData *thread_output =
+        (ThreadsOutputData *)malloc(sizeof(ThreadsOutputData));
+    struct timespec start, end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
     FileData *file_data = threads_data->file_data;
     FileData *ordered_numbers = malloc(sizeof(FileData));
 
@@ -51,12 +53,14 @@ void *sortNumbersThread(void *args) {
 
     ordered_numbers->numbers = file_data->numbers;
     ordered_numbers->quantity = file_data->quantity;
-    threadOutput->outputFileData = ordered_numbers;
-    clock_gettime(CLOCK_MONOTONIC, &fim);
-    threadOutput->tempoExecucao = (fim.tv_sec - inicio.tv_sec) + (fim.tv_nsec - inicio.tv_nsec) / 1e9;
+    thread_output->output_file_data = ordered_numbers;
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    thread_output->execution_time =
+        (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
     free(threads_data->output_file);
     free(threads_data);
-    //Descomente para ver até onde essa thread vai e va ao no file controller e descomente tambem;
-    // printOrderedNumbers("teste.txt", ordered_numbers);
-    pthread_exit((void *)threadOutput);
+    // Descomente para ver até onde essa thread vai e va ao no file controller e
+    // descomente tambem;
+    //  printOrderedNumbers("teste.txt", ordered_numbers);
+    pthread_exit((void *)thread_output);
 }

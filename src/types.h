@@ -18,8 +18,8 @@ typedef struct {
 } FileData;
 
 typedef struct {
-    FileData *outputFileData;
-    double tempoExecucao;
+    FileData *output_file_data;
+    double execution_time;
 } ThreadsOutputData;
 
 // Dados enviados para as threads
